@@ -94,3 +94,7 @@ Choose the file in the **Upload marks CSV** panel. The chart redraws in the brow
 - **Site cannot be reached:** the server is not running, or the URL/port differs. Start `python -m uvicorn app:app --reload` from this folder.
 - **Address already in use:** another process owns port 8000. Stop it or run `python -m uvicorn app:app --port 8001` and open port 8001.
 - **PowerShell blocks activation:** run `Set-ExecutionPolicy -Scope Process Bypass`, then activate `.\.venv\Scripts\Activate.ps1`.
+
+## Github
+
+- https://github.com/Zandets/NCIT-Proactive-Transportation-Monitoring-Dashboard
