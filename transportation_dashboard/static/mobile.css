@@ -1,0 +1,19 @@
+.menu-toggle{display:none}
+.sidebar{background:#0c8d95;padding:22px 12px;min-height:620px;border-radius:8px}
+.sidebar .month,.sidebar .sidebar-metrics,.sidebar .model-link{display:none}
+.side-nav{display:grid;gap:4px;margin-bottom:28px}
+.brand{font-size:12px;letter-spacing:.12em;padding:4px 9px 12px}
+.side-nav a{color:#d9f4f4;text-decoration:none;font-size:12px;padding:11px 10px;border-radius:5px;display:block}
+.side-nav a.active,.side-nav a:hover{background:#087078;color:#fff}
+.csv-tools{display:flex;gap:14px;align-items:center;flex-wrap:wrap;border-top:1px solid #d8d8d8;margin-top:12px;padding-top:12px;font-size:12px}.csv-tools small{display:block;color:#777;font-weight:400;margin-top:3px}.file-button{background:#0c8d95;color:#fff;padding:7px 10px;border-radius:4px;font-weight:700;cursor:pointer}.file-button input{display:none}.csv-submit{background:#087078;color:#fff;border:0;border-radius:4px;padding:7px 11px;font-weight:700;cursor:pointer}.csv-submit:disabled{opacity:.5;cursor:not-allowed}.csv-tools span{color:#777}.marks-wrap{margin-top:12px}.marks-wrap h2{text-align:left;font-size:14px;margin:0 0 4px}.marks-wrap svg{background:#fff;border:1px solid #ddd;border-radius:4px;width:100%;height:180px;display:block}.marks-grid{stroke:#ddd;stroke-width:1}.marks-bar{fill:#0c8d95;cursor:pointer}.marks-bar:hover{fill:#d64c4f}.chart-tip{position:fixed;pointer-events:none;background:#26343e;color:#fff;padding:5px 7px;border-radius:4px;font-size:11px;z-index:5;display:none}
+@media(max-width:700px){
+  .titlebar{display:grid;grid-template-columns:auto 1fr;align-items:start;gap:12px}
+  .titlebar h1{font-size:25px}
+  .feed{grid-column:2;margin-top:5px}
+  .menu-toggle{display:flex;flex-direction:column;justify-content:center;gap:4px;width:36px;height:36px;border:1px solid #d7dce5;background:#fff;border-radius:5px;padding:8px;cursor:pointer}
+  .menu-toggle span{display:block;height:2px;background:#0c8d95;border-radius:2px}
+  .sidebar{display:none;min-height:auto;margin:14px 0}
+  .sidebar.is-open{display:block}
+  .sidebar-metrics{display:none}
+  .side-nav{margin-bottom:12px}
+}
