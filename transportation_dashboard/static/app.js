@@ -105,3 +105,96 @@ load().catch(() => { $('#updated').textContent = 'Preview mode · start FastAPI 
 fetch('/api/marks').then(response => response.json()).then(data => {
   if (data.rows?.length) { renderMarks(data.rows); $('#csvStatus').textContent = `Loaded ${data.rows.length} rows from ${data.source}`; }
 }).catch(() => {});
+
+// Supabase Image Upload
+function initImageUpload() {
+  const SUPABASE_URL = 'https://pnnhzqtsybensniilicr.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBubmh6cXRzeWJlbnNuaWlsaWNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2Njk5NDUsImV4cCI6MjEwMjI0NTk0NX0.s6RTxukG-9AoeqE8-VqdO9AMkUSTW9GWARsT9PZLzyE';
+  
+  // Check if Supabase is available
+  if (!window.supabase) {
+    console.error('Supabase library not loaded');
+    return;
+  }
+  
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  
+  let selectedImageFile = null;
+  const imageUpload = $('#imageUpload');
+  const imageUploadBtn = $('#imageUploadBtn');
+  const imageUploadStatus = $('#imageUploadStatus');
+  const uploadedImagePreview = $('#uploadedImagePreview');
+  
+  if (!imageUpload || !imageUploadBtn) {
+    console.error('Image upload elements not found');
+    return;
+  }
+  
+  imageUpload.addEventListener('change', (event) => {
+    selectedImageFile = event.target.files[0] || null;
+    if (selectedImageFile) {
+      imageUploadStatus.textContent = `Selected: ${selectedImageFile.name}`;
+      imageUploadBtn.disabled = false;
+    } else {
+      imageUploadStatus.textContent = 'No file selected';
+      imageUploadBtn.disabled = true;
+    }
+  });
+  
+  imageUploadBtn.addEventListener('click', async () => {
+    if (!selectedImageFile) return;
+    
+    imageUploadStatus.textContent = `Uploading ${selectedImageFile.name}…`;
+    imageUploadBtn.disabled = true;
+    
+    try {
+      const fileName = `${Date.now()}-${selectedImageFile.name}`;
+      
+      const { data, error } = await supabase.storage
+        .from('images')
+        .upload(`uploads/${fileName}`, selectedImageFile);
+      
+      if (error) throw error;
+      
+      const { data: publicData } = supabase.storage
+        .from('images')
+        .getPublicUrl(`uploads/${fileName}`);
+      
+      imageUploadStatus.textContent = `✓ Uploaded: ${selectedImageFile.name}`;
+      uploadedImagePreview.innerHTML = `<img src="${publicData.publicUrl}" style="max-width:100%; border-radius:4px; max-height:200px;">`;
+      
+      imageUpload.value = '';
+      selectedImageFile = null;
+      imageUploadBtn.disabled = true;
+    } catch (error) {
+      imageUploadStatus.textContent = `Error: ${error.message}`;
+      imageUploadBtn.disabled = false;
+    }
+  });
+  
+  imageUploadBtn.disabled = true;
+}
+
+// Initialize image upload when Supabase is ready
+if (window.supabase) {
+  initImageUpload();
+} else {
+  // Wait for Supabase to load from CDN
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(initImageUpload, 1000);
+  });
+}
+
+let uploadBtn = document.querySelector("#file-upload");
+uploadBtn.addEventListener("change", addimage);
+function addimage() {
+let reader;
+if (this.files&& this.files[0]){
+  reader = new FileReader();
+  reader.onload = (e) => {
+    imgObject.img.src = e.target.result;
+    drawCharts();
+  };
+    reader.readAsDataURL(this.files[0]);
+  }
+}

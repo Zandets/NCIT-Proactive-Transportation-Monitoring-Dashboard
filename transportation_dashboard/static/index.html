@@ -1,13 +1,26 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Transport Management Dashboard</title><link rel="stylesheet" href="static/styles.css"><link rel="stylesheet" href="static/mobile.css"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Transport Management Dashboard</title><link rel="stylesheet" href="static/styles.css"><link rel="stylesheet" href="static/mobile.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script></head>
 <body><main class="dashboard">
   <header class="titlebar"><button class="menu-toggle" id="menuToggle" aria-label="Open navigation" aria-expanded="false"><span></span><span></span><span></span></button><div><h1>Transport management dashboard <span>for logistics company with fleet status</span></h1><p>This dashboard helps operations teams measure transportation efficiency and identify delivery risks before they impact customers.</p></div><div class="feed"><i></i><b>Live operational feed</b><small id="updated">Updating…</small></div></header>
   <aside class="sidebar" id="sidebar"><nav class="side-nav" aria-label="Dashboard navigation"><b class="brand">TRANSIT OPS</b><a class="active" href="#overview">Overview</a><a href="#fleet">Fleet status</a><a href="#deliveries">Deliveries</a><a href="#forecast">Forecast</a></nav><div class="month">July, 2026 <span>●</span></div><div class="sidebar-metrics">
     <article><span>Revenue</span><strong>$50,000</strong><em class="down">(-5%)</em></article><article><span>Costs</span><strong>$300,500</strong><em class="up">(-6%)</em></article><article><span>Profit</span><strong>$300,500</strong><em class="down">(-7%)</em></article><article><span>Shipments</span><strong id="impact">800</strong><em class="down">(-3%)</em></article><article><span>Avg delivery time</span><strong>5h</strong><em class="up">(-8%)</em></article>
   </div><div class="model-link"><b>ML / DL gateway</b><span>Connected to FastAPI</span></div></aside>
   <section class="content">
-    <section class="row top-row">
+    <article class ="model-panel asset-dashboard"><h2>Asset Dashboard</h2><div class="asset-section">Total Assets</div><div class="asset-section">Class A</div><div class="asset-section">Class B</div><div class="asset-section">Total Images</div></article>
+    <section class="row bottom-row">
+      <article class ="panel class-assets"><h2>Assets by Class</h2><label for="file upload" class="custom-file-upload btn">place<label><input type="file" id="file-upload"></article>
+        <article class ="panel class-distribution"><h2>Class Distribution</h2><label for="file upload" class="custom-file-upload btn">Upload Background<label><input type="file" id="file-upload"></article>
+    </section>
+          <section class="model-panel">
+        <article class ="panel assets-ot"><h2>Assets Over Time</h2><label for="file upload" class="custom-file-upload btn">place<label><input type="file" id="file-upload"></article>
+          </section> 
+          <section class="row bottom-row">
+         <article class ="panel image"><h2>Upload Images</h2><label class="custom-file-upload btn">Choose Image<input type="file" id="imageUpload" accept="image/*"></label><button id="imageUploadBtn" class="custom-file-upload btn" style="margin-left: 8px;">Upload to Supabase</button><span id="imageUploadStatus" style="margin-left: 12px; font-size: 12px;">No file selected</span><div id="uploadedImagePreview" style="margin-top: 12px;"></div></article>
+         <article class ="panel gallery"><h2>Image Gallery</h2><label for="file upload" class="custom-file-upload btn">place<label><input type="file" id="file-upload"></article>
+          </section>
+         <article class ="panel asset-data"><h2>Asset Data / Details</h2><label for="file upload" class="custom-file-upload btn">place </article>
+          <section class="row top-row">
       <article class="panel fleet-status"><h2>Fleet Status</h2><div class="fleet-inner"><div class="gauge" id="fleetGauge"><div><b id="otp">95%</b><small>Fleet efficiency</small></div></div><div class="status-list"><p><span>Total fleet</span><b id="vehicles">63</b></p><p><span>On the move</span><b>58</b></p><p><span>In maintenance</span><b>5</b></p></div></div></article>
       <article class="panel delivery-status"><h2>Delivery Status</h2><div class="donut"><div><b>95%</b><small>Within time limit</small></div></div><div class="status-list"><p><span>Within time limit</span><b>500</b></p><p><span>Out of time limit</span><b id="alertsCount">5</b></p></div></article>
       <article class="panel countries"><h2>Deliveries by Country</h2><div class="country-chart"><div class="country-donut"><div></div></div><span class="usa">USA · 28%</span><span class="germany">Germany · 30%</span><span class="france">France · 22%</span><span class="switzerland">Switzerland · 20%</span></div></article>

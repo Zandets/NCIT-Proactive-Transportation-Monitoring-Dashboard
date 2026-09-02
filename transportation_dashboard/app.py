@@ -6,7 +6,7 @@ from typing import Literal, cast
 import os
 import re
 
-from fastapi import FastAPI
+from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
@@ -59,7 +59,6 @@ ALERTS = [
     {"id":"A-720","severity":"Watch","title":"Airport Express exposure to storm cell","detail":"Rain intensity is rising along the east corridor.","action":"Notify route supervisor","risk":.63},
     {"id":"A-721","severity":"Watch","title":"North Loop headway widening","detail":"Two departures are 7 minutes apart during peak demand.","action":"Hold next departure","risk":.47},
 ]
-
 @app.get("/", include_in_schema=False)
 def dashboard(): return FileResponse(BASE_DIR / "static" / "index.html")
 
@@ -102,3 +101,23 @@ async def output_data():
     for row in data:
         print (row)
     return{"users": data}
+@app.post("/api/upload-image")
+async def upload_image(file: UploadFile = File(...)):
+    """Upload image to Supabase storage."""
+    try:
+        # Read file content
+        contents = await file.read()
+        
+        # Upload to Supabase Storage bucket "images"
+        file_path = f"uploads/{file.filename}"
+        supabase_client.storage.from_("Images").upload(
+            file_path, 
+            contents
+        )
+        
+        # Get public URL
+        public_url = supabase_client.storage.from_("Images").get_public_url(file_path)
+        
+        return {"url": public_url, "filename": file.filename}
+    except Exception as e:
+        return {"detail": str(e)}, 400
