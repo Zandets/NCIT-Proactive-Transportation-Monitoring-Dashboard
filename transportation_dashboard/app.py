@@ -110,14 +110,34 @@ async def upload_image(file: UploadFile = File(...)):
         
         # Upload to Supabase Storage bucket "images"
         file_path = f"uploads/{file.filename}"
-        supabase_client.storage.from_("Images").upload(
+        supabase_client.storage.from_("images").upload(
             file_path, 
             contents
         )
         
         # Get public URL
-        public_url = supabase_client.storage.from_("Images").get_public_url(file_path)
+        public_url = supabase_client.storage.from_("images").get_public_url(file_path)
         
         return {"url": public_url, "filename": file.filename}
+    except Exception as e:
+        return {"detail": str(e)}, 400
+
+@app.get("/api/images")
+async def list_images():
+    """Return image files from the uploads folder for the gallery."""
+    try:
+        bucket = supabase_client.storage.from_("images")
+        files = bucket.list("uploads")
+        images = []
+        for file in files:
+            file_name = file.get("name")
+            if not file_name:
+                continue
+            file_path = f"uploads/{file_name}"
+            images.append({
+                "filename": file_name,
+                "url": bucket.get_public_url(file_path),
+            })
+        return {"images": images}
     except Exception as e:
         return {"detail": str(e)}, 400

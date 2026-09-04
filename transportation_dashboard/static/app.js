@@ -166,6 +166,7 @@ function initImageUpload() {
       imageUpload.value = '';
       selectedImageFile = null;
       imageUploadBtn.disabled = true;
+      loadImageGallery();
     } catch (error) {
       imageUploadStatus.textContent = `Error: ${error.message}`;
       imageUploadBtn.disabled = false;
@@ -173,6 +174,25 @@ function initImageUpload() {
   });
   
   imageUploadBtn.disabled = true;
+}
+
+async function loadImageGallery() {
+  const gallery = $('#imageGallery');
+  if (!gallery) return;
+  try {
+    const response = await fetch('/api/images');
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.detail || 'Unable to load images');
+    if (!data.images?.length) {
+      gallery.innerHTML = '<span>No uploaded images</span>';
+      return;
+    }
+    gallery.innerHTML = data.images.map(image =>
+      `<img src="${image.url}" alt="${image.filename}" loading="lazy">`
+    ).join('');
+  } catch (error) {
+    gallery.textContent = `Gallery error: ${error.message}`;
+  }
 }
 
 // Initialize image upload when Supabase is ready
@@ -184,6 +204,8 @@ if (window.supabase) {
     setTimeout(initImageUpload, 1000);
   });
 }
+
+loadImageGallery();
 
 let uploadBtn = document.querySelector("#file-upload");
 uploadBtn.addEventListener("change", addimage);

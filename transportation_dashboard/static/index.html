@@ -9,17 +9,17 @@
   <section class="content">
     <article class ="model-panel asset-dashboard"><h2>Asset Dashboard</h2><div class="asset-section">Total Assets</div><div class="asset-section">Class A</div><div class="asset-section">Class B</div><div class="asset-section">Total Images</div></article>
     <section class="row bottom-row">
-      <article class ="panel class-assets"><h2>Assets by Class</h2><label for="file upload" class="custom-file-upload btn">place<label><input type="file" id="file-upload"></article>
-        <article class ="panel class-distribution"><h2>Class Distribution</h2><label for="file upload" class="custom-file-upload btn">Upload Background<label><input type="file" id="file-upload"></article>
+      <article class ="panel class-assets"><h2>Assets by Class</h2></article>
+        <article class ="panel class-distribution"><h2>Class Distribution</h2></article>
     </section>
           <section class="model-panel">
-        <article class ="panel assets-ot"><h2>Assets Over Time</h2><label for="file upload" class="custom-file-upload btn">place<label><input type="file" id="file-upload"></article>
+        <article class ="panel assets-ot"><h2>Assets Over Time</h2></article>
           </section> 
           <section class="row bottom-row">
          <article class ="panel image"><h2>Upload Images</h2><label class="custom-file-upload btn">Choose Image<input type="file" id="imageUpload" accept="image/*"></label><button id="imageUploadBtn" class="custom-file-upload btn" style="margin-left: 8px;">Upload to Supabase</button><span id="imageUploadStatus" style="margin-left: 12px; font-size: 12px;">No file selected</span><div id="uploadedImagePreview" style="margin-top: 12px;"></div></article>
-         <article class ="panel gallery"><h2>Image Gallery</h2><label for="file upload" class="custom-file-upload btn">place<label><input type="file" id="file-upload"></article>
-          </section>
-         <article class ="panel asset-data"><h2>Asset Data / Details</h2><label for="file upload" class="custom-file-upload btn">place </article>
+         <article class ="panel gallery"><h2>Image Gallery</h2><div id="imageGallery" class="image-gallery"><span>Loading images...</span></div></article>
+          </section class="content">
+         <article class ="panel asset-data"><h2>Asset Data / Details</h2><div class="asset-section">Asset ID</div><div class="asset-section">Class</div><div class="asset-section">Image</div><div class="asset-section">Date</div><div class="asset-section">Other Information</div></article>
           <section class="row top-row">
       <article class="panel fleet-status"><h2>Fleet Status</h2><div class="fleet-inner"><div class="gauge" id="fleetGauge"><div><b id="otp">95%</b><small>Fleet efficiency</small></div></div><div class="status-list"><p><span>Total fleet</span><b id="vehicles">63</b></p><p><span>On the move</span><b>58</b></p><p><span>In maintenance</span><b>5</b></p></div></div></article>
       <article class="panel delivery-status"><h2>Delivery Status</h2><div class="donut"><div><b>95%</b><small>Within time limit</small></div></div><div class="status-list"><p><span>Within time limit</span><b>500</b></p><p><span>Out of time limit</span><b id="alertsCount">5</b></p></div></article>
