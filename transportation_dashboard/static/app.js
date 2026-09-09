@@ -188,7 +188,7 @@ async function loadImageGallery() {
       return;
     }
     gallery.innerHTML = data.images.map(image =>
-      `<img src="${image.url}" alt="${image.filename}" loading="lazy">`
+      `<img class="gallery-image" src="${image.url}" alt="${image.filename}" loading="lazy">`
     ).join('');
   } catch (error) {
     gallery.textContent = `Gallery error: ${error.message}`;
