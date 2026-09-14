@@ -124,6 +124,7 @@ function initImageUpload() {
   const imageUploadBtn = $('#imageUploadBtn');
   const imageUploadStatus = $('#imageUploadStatus');
   const uploadedImagePreview = $('#uploadedImagePreview');
+  const assetClass = $('#assetClass');
   
   if (!imageUpload || !imageUploadBtn) {
     console.error('Image upload elements not found');
@@ -159,6 +160,15 @@ function initImageUpload() {
       const { data: publicData } = supabase.storage
         .from('images')
         .getPublicUrl(`uploads/${fileName}`);
+
+      const { error: assetError } = await supabase.from('asset_data').insert({
+        asset_id: `ASSET-${Date.now()}`,
+        class: assetClass?.value || 'Unclassified',
+        image_url: publicData.publicUrl,
+        filename: selectedImageFile.name,
+        created_at: new Date().toISOString()
+      });
+      if (assetError) throw assetError;
       
       imageUploadStatus.textContent = `✓ Uploaded: ${selectedImageFile.name}`;
       uploadedImagePreview.innerHTML = `<img src="${publicData.publicUrl}" style="max-width:100%; border-radius:4px; max-height:200px;">`;
@@ -167,6 +177,7 @@ function initImageUpload() {
       selectedImageFile = null;
       imageUploadBtn.disabled = true;
       loadImageGallery();
+      loadAssetData(supabase).catch(error => console.error('Unable to refresh asset data', error));
     } catch (error) {
       imageUploadStatus.textContent = `Error: ${error.message}`;
       imageUploadBtn.disabled = false;
@@ -174,6 +185,11 @@ function initImageUpload() {
   });
   
   imageUploadBtn.disabled = true;
+  loadAssetData(supabase).catch(error => {
+    console.error('Unable to load asset data', error);
+    $('#asset-table tbody').innerHTML = '<tr><td colspan="4">Unable to load asset data</td></tr>';
+  });
+  subscribeToAssetData(supabase);
 }
 
 async function loadImageGallery() {
@@ -193,6 +209,44 @@ async function loadImageGallery() {
   } catch (error) {
     gallery.textContent = `Gallery error: ${error.message}`;
   }
+}
+
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>'"]/g, character => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+  }[character]));
+}
+
+function renderAssetData(rows) {
+  const tableBody = $('#asset-table tbody');
+  if (!tableBody) return;
+  if (!rows.length) {
+    tableBody.innerHTML = '<tr><td colspan="4">No asset data yet</td></tr>';
+    return;
+  }
+  tableBody.innerHTML = rows.map(row => `<tr>
+    <td>${escapeHtml(row.asset_id)}</td>
+    <td>${escapeHtml(row.class)}</td>
+    <td><a href="${escapeHtml(row.image_url)}" target="_blank" rel="noopener"><img src="${escapeHtml(row.image_url)}" alt="${escapeHtml(row.filename || row.asset_id)}" loading="lazy" style="max-width:80px; max-height:50px;"></a></td>
+    <td>${new Date(row.created_at).toLocaleDateString()}</td>
+  </tr>`).join('');
+}
+
+async function loadAssetData(client) {
+  const { data, error } = await client
+    .from('asset_data')
+    .select('asset_id, class, image_url, filename, created_at')
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  renderAssetData(data || []);
+}
+
+function subscribeToAssetData(client) {
+  client.channel('asset-data-changes')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'asset_data' }, () => {
+      loadAssetData(client).catch(error => console.error('Unable to refresh asset data', error));
+    })
+    .subscribe();
 }
 
 // Initialize image upload when Supabase is ready

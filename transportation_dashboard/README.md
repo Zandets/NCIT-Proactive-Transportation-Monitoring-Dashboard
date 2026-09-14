@@ -81,6 +81,32 @@ V-307,74
 
 Choose the file in the **Upload marks CSV** panel. The chart redraws in the browser immediately; no file is uploaded to the server.
 
+## Supabase image assets
+
+The image uploader stores files in the `images` Storage bucket and creates the matching row in the `asset_data` table. Run this once in the Supabase SQL editor:
+
+```sql
+create table if not exists public.asset_data (
+  asset_id text primary key,
+  class text not null default 'Unclassified',
+  image_url text not null,
+  filename text not null,
+  created_at timestamptz not null default now()
+);
+
+alter table public.asset_data enable row level security;
+
+create policy "Public can read asset data"
+  on public.asset_data for select using (true);
+
+create policy "Anonymous users can add asset data"
+  on public.asset_data for insert with check (true);
+
+alter publication supabase_realtime add table public.asset_data;
+```
+
+The table must also have Storage policies that allow the dashboard's `anon` key to upload to the `images` bucket. The dashboard automatically fills `asset_id`, `class`, `image_url`, `filename`, and `created_at`. New rows are rendered immediately through the Realtime subscription.
+
 ## Project map
 
 - `app.py` — FastAPI routes, request validation, sample data, and model adapter.
