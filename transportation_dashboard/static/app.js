@@ -125,7 +125,6 @@ function initImageUpload() {
   const imageUploadStatus = $('#imageUploadStatus');
   const uploadedImagePreview = $('#uploadedImagePreview');
   const assetClass = $('#assetClass');
-  
   if (!imageUpload || !imageUploadBtn) {
     console.error('Image upload elements not found');
     return;
@@ -136,6 +135,7 @@ function initImageUpload() {
     if (selectedImageFile) {
       imageUploadStatus.textContent = `Selected: ${selectedImageFile.name}`;
       imageUploadBtn.disabled = false;
+      
     } else {
       imageUploadStatus.textContent = 'No file selected';
       imageUploadBtn.disabled = true;
@@ -147,29 +147,48 @@ function initImageUpload() {
     
     imageUploadStatus.textContent = `Uploading ${selectedImageFile.name}…`;
     imageUploadBtn.disabled = true;
-    
+    async function imageID() {
+      const { data, error } = await supabase.rpc('next_image_id')
+
+if (error) {
+  console.error(error)
+} else {
+  const nextId = data
+  console.log(nextId)
+}
+      //const { data, error: counterError } = await supabase.rpc('next_image_id()');
+      //if (counterError) {
+     //   console.warn('Counter unavailable; using a generated asset ID:', counterError.message);
+     //   return null;
+    //  }
+    //  return typeof data === 'number' ? data : data?.count ?? data?.next_image_id ?? null;
+    }
     try {
-      const fileName = `${Date.now()}-${selectedImageFile.name}`;
-      
-      const { data, error } = await supabase.storage
+      const counterValue = await imageID();
+      //const uniqueId = crypto.randomUUID();
+      const assetId = `ASSET-${counterValue}`;
+      const extension = selectedImageFile.name.match(/\.[^./]+$/)?.[0] || '';
+      const fileName = `${assetId}-${extension}`;
+
+      const { error: uploadError } = await supabase.storage
         .from('images')
         .upload(`uploads/${fileName}`, selectedImageFile);
       
-      if (error) throw error;
+      if (uploadError) throw uploadError;
       
       const { data: publicData } = supabase.storage
         .from('images')
         .getPublicUrl(`uploads/${fileName}`);
 
+        const publicUrl = publicData.publicUrl;
       const { error: assetError } = await supabase.from('asset_data').insert({
-        asset_id: `ASSET-${Date.now()}`,
+          asset_id: assetId,
         class: assetClass?.value || 'Unclassified',
         image_url: publicData.publicUrl,
         filename: selectedImageFile.name,
         created_at: new Date().toISOString()
       });
       if (assetError) throw assetError;
-      
       imageUploadStatus.textContent = `✓ Uploaded: ${selectedImageFile.name}`;
       uploadedImagePreview.innerHTML = `<img src="${publicData.publicUrl}" style="max-width:100%; border-radius:4px; max-height:200px;">`;
       
